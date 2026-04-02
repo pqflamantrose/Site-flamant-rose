@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PQ Flamant Rose</title>
+  <style>
+    :root {
+      --bg1: #ffb6d9;
+      --bg2: #ff7eb6;
+      --card: rgba(255,255,255,0.18);
+      --text: #ffffff;
+      --dark: #8b1e57;
+      --accent: #ffe66d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "🦩";
+      position: absolute;
+      font-size: clamp(60px, 10vw, 140px);
+      opacity: 0.15;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .hero::before { top: 30px; left: 30px; }
+    .hero::after { bottom: 30px; right: 30px; animation-delay: 1.2s; }
+
+    .card {
+      width: min(1100px, 100%);
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: clamp(40px, 7vw, 88px);
+      line-height: 0.95;
+      margin: 0 0 14px;
+      text-transform: uppercase;
+      text-shadow: 0 4px 16px rgba(139, 30, 87, 0.35);
+    }
+
+    .subtitle {
+      font-size: clamp(18px, 2.6vw, 28px);
+      margin: 0 0 18px;
+      color: #fff6fb;
+    }
+
+    .tagline {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--dark);
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 999px;
+      margin-bottom: 22px;
+      transform: rotate(-2deg);
+    }
+
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 28px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .features li {
+      background: rgba(255,255,255,0.16);
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 18px;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    button, .ghost {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    button {
+      background: white;
+      color: var(--dark);
+    }
+
+    .ghost {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.45);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button:hover, .ghost:hover { transform: translateY(-2px) scale(1.02); }
+
+    .product-wrap {
+      display: grid;
+      place-items: center;
+      position: relative;
+      min-height: 420px;
+    }
+
+    .roll-stack {
+      position: relative;
+      width: 320px;
+      height: 320px;
+    }
+
+    .roll {
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #ffd8ea 0 24px, #ff9fca 25px 68px, #ff8abd 69px 100%);
+      position: absolute;
+      box-shadow: inset 0 0 0 10px rgba(255,255,255,0.15), 0 18px 28px rgba(0,0,0,0.18);
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+    }
+
+    .r1 { left: 0; bottom: 0; }
+    .r2 { right: 0; bottom: 0; }
+    .r3 { left: 50%; transform: translateX(-50%); top: 10px; }
+
+    .badge {
+      position: absolute;
+      top: -14px;
+      right: -10px;
+      background: #ffffff;
+      color: var(--dark);
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+      transform: rotate(8deg);
+    }
+
+    .floating-note {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 18px;
+      color: #fff9fc;
+    }
+
+    .tiny {
+      opacity: 0.8;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(120px);
+      background: #ffffff;
+      color: var(--dark);
+      padding: 14px 18px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      font-weight: 700;
+      transition: transform 0.25s ease;
+      z-index: 40;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .purchase-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: linear-gradient(180deg, #fff7fb, #ffd7ea);
+      color: var(--dark);
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      box-shadow: 0 -14px 40px rgba(0,0,0,0.18);
+      transform: translateY(calc(100% - 86px));
+      transition: transform 0.35s ease;
+      padding: 18px 18px 22px;
+    }
+
+    .purchase-bar.open {
+      transform: translateY(0);
+    }
+
+    .purchase-handle {
+      width: 64px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(139, 30, 87, 0.25);
+      margin: 0 auto 14px;
+    }
+
+    .purchase-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .purchase-title {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .purchase-close {
+      background: rgba(139, 30, 87, 0.1);
+      color: var(--dark);
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .purchase-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .purchase-box {
+      background: rgba(255,255,255,0.75);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .purchase-box h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .purchase-box p {
+      margin: 6px 0;
+    }
+
+    .fake-input {
+      width: 100%;
+      border: 1px solid rgba(139, 30, 87, 0.15);
+      background: white;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+
+    .buy-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .buy-main, .buy-alt {
+      flex: 1 1 220px;
+      border: none;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .buy-main {
+      background: var(--dark);
+      color: white;
+    }
+
+    .buy-alt {
+      background: white;
+      color: var(--dark);
+      border: 2px solid rgba(139, 30, 87, 0.16);
+    }
+
+    .pay-note {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 860px) {
+      .purchase-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-14px) rotate(4deg); }
+    }
+
+    @media (max-width: 860px) {
+      .card {
+        grid-template-columns: 1fr;
+        padding: 24px;
+      }
+
+      .product-wrap {
+        min-height: 360px;
+      }
+
+      .roll-stack {
+        transform: scale(0.9);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="hero">
+    <section class="card">
+      <div>
+        <div class="tagline">🦩 Le seul PQ inutilement iconique</div>
+        <h1>PQ Flamant Rose</h1>
+        <p class="subtitle">Le papier toilette tropical que personne n’a demandé, mais qui existe quand même.</p>
+
+        <ul class="features">
+          <li>✅ Doux comme un mensonge marketing</li>
+          <li>✅ Rose agressivement chic</li>
+          <li>✅ Ambiance vacances pour moments critiques</li>
+        </ul>
+
+        <div class="cta-row">
+          <button id="buyBtn">Acheter maintenant</button>
+          <a class="ghost" href="#" id="learnMore">En savoir trop</a>
+        </div>
+
+        <p class="tiny">* Aucun flamant rose n’a validé cette campagne.</p>
+      </div>
+
+      <div class="product-wrap">
+        <img src="35de6a70-1d50-42f8-bea2-3e599eee36cb.png" alt="PQ Flamant Rose" style="max-width:100%; border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.25);" />
+        <p class="floating-note">Parce que quitte à faire ça… autant le faire en rose.</p>
+      </div>
+    </section>
+  </main>
+
+  <section class="purchase-bar" id="purchaseBar">
+    <div class="purchase-handle"></div>
+    <div class="purchase-top">
+      <div>
+        <div class="purchase-title">Barre d'achat flamant rose</div>
+        <div>Elle se déplie comme sur Amazon Luxe, mais pour du PQ. Quelle époque.</div>
+      </div>
+      <button class="purchase-close" id="closeBar">×</button>
+    </div>
+
+    <div class="purchase-grid">
+      <div class="purchase-box">
+        <h3>🛒 Produit</h3>
+        <p><strong>PQ Flamant Rose Premium</strong></p>
+        <p>Prix : <strong>49,99€</strong></p>
+        <p>Livraison : tropicale, approximative, émotionnelle</p>
+        <input class="fake-input" value="Quantité : 1 rouleau de trop" aria-label="Quantité" />
+        <input class="fake-input" value="Adresse : quelque part dans le drame" aria-label="Adresse" />
+      </div>
+
+      <div class="purchase-box">
+        <h3>💳 Paiement</h3>
+        <input class="fake-input" value="Nom : Client très douteux" aria-label="Nom" />
+        <input class="fake-input" value="Carte : 4242 4242 4242 4242" aria-label="Carte" />
+        <input class="fake-input" value="Livraison : Ultra Rose Express" aria-label="Livraison" />
+        <div class="buy-actions">
+          <button class="buy-main" id="confirmBuy">Payer maintenant</button>
+          <button class="buy-alt" id="panicBuy">Mode panique</button>
+        </div>
+        <div class="pay-note">Paiement simulé côté front. Ton banquier peut respirer.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast">Paiement impossible : même le site a honte.</div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    const showToast = (message) => {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    };
+
+    document.getElementById('buyBtn').addEventListener('click', () => {
+      const bar = document.getElementById('purchaseBar');
+      bar.classList.toggle('open');
+    });
+
+    document.getElementById('learnMore').addEventListener('click', (e) => {
+      e.preventDefault();
+      showToast('Infos supplémentaires : c\'est vraiment juste du PQ rose.');
+    });
+
+    document.getElementById('closeBar').addEventListener('click', () => {
+      document.getElementById('purchaseBar').classList.remove('open');
+    });
+
+    document.getElementById('confirmBuy').addEventListener('click', () => {
+      showToast('Paiement simulé validé : tu as acheté un problème rose.');
+    });
+
+    document.getElementById('panicBuy').addEventListener('click', () => {
+      document.getElementById('purchaseBar').classList.remove('open');
+      showToast('Mode panique activé : fuite stratégique du checkout.');
+    });
+  </script>
+</body>
+</html>
